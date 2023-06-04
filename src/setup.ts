@@ -2,22 +2,24 @@ import { board } from "./script";
 import Grid from "./grid";
 import P5, { Renderer } from "p5";
 import Spot from "./spot";
+import Board from "board";
 
 const rows: number = 50;
 const cols: number = 50;
 
 export default function setup(p5: P5): void {
-  const canvasSize: number = [innerHeight, innerWidth].sort()[1];
+  const canvasSize: number = [innerHeight, innerWidth].sort()[1] - 20;
   const canvas: Renderer = p5.createCanvas(canvasSize, canvasSize);
   canvas.parent("app");
   // p5.frameRate((rows * cols) / (10 * 60));
-  // p5.frameRate(10);
+  // p5.frameRate(30);
 
-  // box border
-  p5.noFill();
-  p5.stroke("#2fa");
-  p5.background("#0e0e0e");
-  p5.angleMode("degrees");
+  p5.strokeCap("round");
+  // // box border
+  // p5.noFill();
+  // p5.stroke("#2fa");
+  // p5.background("#0e0e0e");
+  // p5.angleMode("degrees");
 
   // grid making
   board.grid = new Grid({ p5, cols, rows });
@@ -42,7 +44,7 @@ export default function setup(p5: P5): void {
   // for debugging
   Object.defineProperties(window, {
     board: {
-      get() {
+      get(): Board {
         return board;
       },
     },
@@ -52,5 +54,6 @@ export default function setup(p5: P5): void {
       },
     },
   });
+
   board.grid?.show();
 }

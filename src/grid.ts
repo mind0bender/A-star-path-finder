@@ -60,7 +60,7 @@ export default class Grid {
           for (let dx: number = -1; dx <= 1; dx++) {
             if (this.spots[j + dy] && this.spots[j + dy][i + dx]) {
               const neighbour: Spot = this.spots[j + dy][i + dx];
-              if (neighbour !== spot && !neighbour.isWall) {
+              if (neighbour !== spot) {
                 spot.neighbours.add(this.spots[j + dy][i + dx]);
               }
             }
@@ -70,19 +70,20 @@ export default class Grid {
     }
   }
   show(): void {
-    this._p5.strokeWeight(0);
     for (const row of this.spots) {
       for (const spot of row) {
-        switch (spot) {
-          case this.start:
-            spot.show(this._p5.color("#2fa"), this._p5.color(0));
-            break;
-          case this.end:
-            spot.show(this._p5.color("#f55"), this._p5.color(0));
-            break;
-          default:
-            spot.show();
-            break;
+        if (spot.isWall || spot === this.start || spot === this.end) {
+          switch (spot) {
+            case this.start:
+              spot.show(this._p5.color("#2fa"), this._p5.color(0));
+              break;
+            case this.end:
+              spot.show(this._p5.color("#f55"), this._p5.color(0));
+              break;
+            default:
+              spot.show();
+              break;
+          }
         }
       }
     }

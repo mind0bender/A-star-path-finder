@@ -4,9 +4,9 @@ import Spot from "./spot";
 let path: Spot | null;
 export default function draw(p5: P5): void {
   const open: Spot[] = Array.from(board.open).sort(
-    (prev: Spot, next: Spot): number => prev.h + prev.g - (next.h + next.g)
+    (prev: Spot, next: Spot): number =>
+      prev.h * 1 + prev.g - (next.h * 1 + next.g)
   );
-  // for (const openSpot of open) {
   if (open.length) {
     const openSpot: Spot = open[0];
     openSpot !== board.grid?.end &&
@@ -15,6 +15,7 @@ export default function draw(p5: P5): void {
 
     openSpot.neighbours.forEach((neighbour: Spot): void => {
       if (
+        !neighbour.isWall &&
         !board.closed.has(neighbour) &&
         board.grid &&
         board.grid.end &&
@@ -22,27 +23,35 @@ export default function draw(p5: P5): void {
       ) {
         /* we don't need to check for g values here 
            as we already did it in setParent */
-        neighbour.setParent(openSpot);
-        // neighbour !== board.grid.end &&
-        //   neighbour !== board.grid.start &&
-        //   neighbour.show(p5.color(100));
-        board.open.add(neighbour);
+        if (
+          neighbour.distanceFrom(openSpot) == 1 ||
+          openSpot.getCommonWalls(neighbour).size < 2
+        ) {
+          neighbour.setParent(openSpot);
+          board.open.add(neighbour);
+        }
       }
     });
     board.open.delete(openSpot);
     board.closed.add(openSpot);
   }
   if (!board.open.size && board.grid?.end) {
-    if (!path) path = board.grid?.end.getParent();
+    if (!path) path = board.grid?.end;
     if (path && path !== board.grid.start) {
-      path.show(p5.color("#2fa"));
-      path = path.getParent();
+      p5.stroke("#2fa");
+      p5.strokeWeight(path?.size / 4);
+      const parent: Spot | null = path.getParent();
+      if (parent) {
+        p5.line(
+          path.pos.x + path.size / 2,
+          path.pos.y + path.size / 2,
+          parent.pos.x + parent.size / 2,
+          parent.pos.y + parent.size / 2
+        );
+      } else {
+        p5.noLoop();
+      }
+      path = parent;
     }
   }
-  // container box
-  p5.stroke("#2fa");
-  p5.strokeWeight(4);
-  p5.noFill();
-  p5.rect(1, 1, p5.width - 2);
-  p5.strokeWeight(1);
 }
