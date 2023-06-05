@@ -8,7 +8,10 @@ const rows: number = 50;
 const cols: number = 50;
 
 export default function setup(p5: P5): void {
-  const canvasSize: number = [innerHeight, innerWidth].sort()[0] - 20;
+  const canvasSize: number =
+    [innerHeight, innerWidth].sort((a: number, b: number): number => {
+      return a - b;
+    })[0] - 20;
   const canvas: Renderer = p5.createCanvas(canvasSize, canvasSize);
   canvas.parent("app");
   // p5.frameRate((rows * cols) / (10 * 60));
