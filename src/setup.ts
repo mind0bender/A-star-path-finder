@@ -8,18 +8,14 @@ const rows: number = 50;
 const cols: number = 50;
 
 export default function setup(p5: P5): void {
-  const canvasSize: number = [innerHeight, innerWidth].sort()[1] - 20;
+  const canvasSize: number = [innerHeight, innerWidth].sort()[0] - 20;
   const canvas: Renderer = p5.createCanvas(canvasSize, canvasSize);
   canvas.parent("app");
   // p5.frameRate((rows * cols) / (10 * 60));
   // p5.frameRate(30);
 
   p5.strokeCap("round");
-  // // box border
-  // p5.noFill();
-  // p5.stroke("#2fa");
-  // p5.background("#0e0e0e");
-  // p5.angleMode("degrees");
+  p5.ellipseMode("center");
 
   // grid making
   board.grid = new Grid({ p5, cols, rows });
@@ -31,6 +27,7 @@ export default function setup(p5: P5): void {
     Math.floor(p5.random(cols)),
     Math.floor(p5.random(rows))
   );
+
   board.open.add(start);
   board.grid.resolveNeighbours();
 

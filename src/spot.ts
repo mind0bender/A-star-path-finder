@@ -1,6 +1,6 @@
 import P5, { Color, Vector } from "p5";
 
-const wallColor = 150;
+const wallColor = 155;
 const noWallColor = 0;
 
 export default class Spot {
@@ -27,47 +27,40 @@ export default class Spot {
     this.pos = p5.createVector(this.i * this.size, this.j * this.size);
     this.isWall = this._p5.random(1) < 0.25; // chances of making a wall
   }
-  show(fC: Color = this.getColor(), sC: Color = fC || this._p5.color(0)): void {
+  show(fC: Color = this.getColor(), sC: Color = fC): void {
     this._p5.stroke(sC);
+    this._p5.fill(fC);
     if (!this.isWall) {
-      this._p5.fill(fC);
+      this._p5.strokeWeight(this.size / 7.5);
       const parentSpot: Spot | null = this.getParent();
       if (parentSpot) {
+        sC.setAlpha(255 * 0.75);
+        this._p5.stroke(sC);
         this._p5.line(
-          this.pos.x + this.size / 2,
-          this.pos.y + this.size / 2,
-          parentSpot.pos.x + parentSpot.size / 2,
-          parentSpot.pos.y + parentSpot.size / 2
+          this.pos.x,
+          this.pos.y,
+          parentSpot.pos.x,
+          parentSpot.pos.y
         );
       } else {
-        this._p5.strokeWeight(0);
-        this._p5.circle(
-          this.pos.x + this.size / 2,
-          this.pos.y + this.size / 2,
-          (2 * this.size) / 3
-        );
+        this._p5.stroke(sC);
+        this._p5.circle(this.pos.x, this.pos.y, this.size / 2);
       }
     } else {
       this._p5.strokeWeight(this.size / 10);
+      this._p5.fill(0);
+
       const neighbouringWalls: Spot[] = Array.from(this.neighbours).filter(
         (neighbour: Spot): boolean => neighbour.isWall
       );
-      if (neighbouringWalls.length <= 1) {
-        this._p5.noFill();
-        this._p5.circle(
-          this.pos.x + this.size / 2,
-          this.pos.y + this.size / 2,
-          this.size / 4
-        );
-      }
-      neighbouringWalls.forEach((neighbor: Spot): void => {
-        this._p5.line(
-          this.pos.x + this.size / 2,
-          this.pos.y + this.size / 2,
-          neighbor.pos.x + neighbor.size / 2,
-          neighbor.pos.y + neighbor.size / 2
-        );
+      neighbouringWalls.forEach((neighbour: Spot): void => {
+        this._p5.stroke(sC);
+        this._p5.line(this.pos.x, this.pos.y, neighbour.pos.x, neighbour.pos.y);
       });
+      if (neighbouringWalls.length <= 1) {
+        this._p5.stroke(sC);
+        this._p5.circle(this.pos.x, this.pos.y, this.size / 4);
+      }
     }
   }
   getParent(): Spot | null {

@@ -15,8 +15,11 @@ export default class Grid {
     const spotSize: number = p5.width / cols;
     for (let j: number = 0; j < rows; j++) {
       const row: Spot[] = [];
+      // this._p5.stroke(255);
+      // this._p5.line(j * spotSize, 0, j * spotSize, this._p5.width);
       for (let i: number = 0; i < cols; i++) {
         const spot: Spot = new Spot(p5, i, j, spotSize);
+        // this._p5.line(0, i * spotSize, this._p5.height, i * spotSize);
         row.push(spot);
       }
       this.spots.push(row);
@@ -75,10 +78,10 @@ export default class Grid {
         if (spot.isWall || spot === this.start || spot === this.end) {
           switch (spot) {
             case this.start:
-              spot.show(this._p5.color("#2fa"), this._p5.color(0));
+              spot.show(this._p5.color(0), this._p5.color("#2fa"));
               break;
             case this.end:
-              spot.show(this._p5.color("#f55"), this._p5.color(0));
+              spot.show(this._p5.color(0), this._p5.color("#f55"));
               break;
             default:
               spot.show();

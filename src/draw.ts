@@ -1,6 +1,7 @@
 import P5 from "p5";
 import { board } from "./script";
 import Spot from "./spot";
+import { mixColors } from "./misc";
 let path: Spot | null;
 export default function draw(p5: P5): void {
   const open: Spot[] = Array.from(board.open).sort(
@@ -9,9 +10,24 @@ export default function draw(p5: P5): void {
   );
   if (open.length) {
     const openSpot: Spot = open[0];
-    openSpot !== board.grid?.end &&
+    if (
+      openSpot !== board.grid?.end &&
       openSpot !== board.grid?.start &&
-      openSpot.show(p5.color(50));
+      board.grid?.end &&
+      board.grid?.start
+    ) {
+      openSpot.show(
+        mixColors(
+          p5,
+          "#ff0",
+          "#f55",
+          1 -
+            openSpot.distanceFrom(board.grid?.end) /
+              (openSpot.distanceFrom(board.grid?.end) +
+                openSpot.distanceFrom(board.grid?.start))
+        )
+      );
+    }
 
     openSpot.neighbours.forEach((neighbour: Spot): void => {
       if (
@@ -37,17 +53,22 @@ export default function draw(p5: P5): void {
   }
   if (!board.open.size && board.grid?.end) {
     if (!path) path = board.grid?.end;
-    if (path && path !== board.grid.start) {
-      p5.stroke("#2fa");
-      p5.strokeWeight(path?.size / 4);
+    if (path && board.grid.start && path !== board.grid.start) {
       const parent: Spot | null = path.getParent();
       if (parent) {
-        p5.line(
-          path.pos.x + path.size / 2,
-          path.pos.y + path.size / 2,
-          parent.pos.x + parent.size / 2,
-          parent.pos.y + parent.size / 2
+        p5.stroke(
+          mixColors(
+            p5,
+            "#ff0",
+            "#f55",
+
+            path.distanceFrom(board.grid?.end) /
+              (path.distanceFrom(board.grid?.end) +
+                path.distanceFrom(board.grid?.start))
+          )
         );
+        p5.strokeWeight(path.size / 4);
+        p5.line(path.pos.x, path.pos.y, parent.pos.x, parent.pos.y);
       } else {
         p5.noLoop();
       }
